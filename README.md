@@ -31,14 +31,18 @@
 
 ## 使用方法
 
-### 1. 配置凭证
+### 1. 初始化配置
 
-编辑 `scripts/config.yaml`：
-
-```yaml
-client_id: "your_client_id"
-client_secret: "your_client_secret"
+```bash
+chmod +x setup.sh
+./setup.sh
 ```
+
+这将创建 `scripts/config.yaml` 文件，包含测试凭证。
+
+⚠️ **这是测试凭证，仅供测试使用！生产环境请替换为您自己的凭证。**
+
+获取凭证：联系飞书 aPaaS 管理员，在「API 凭证管理」中新建凭证。
 
 ### 2. 运行导入
 
