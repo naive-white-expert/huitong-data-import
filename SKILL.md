@@ -1,6 +1,6 @@
 ---
 name: huitong-data-import
-version: 1.6.0
+version: 1.7.0
 description: 飞书 aPaaS 客户线索批量导入工具，支持海尔/卡萨帝/COLMO品牌。
 emoji: 📤
 homepage: https://github.com/naive-white-expert/huitong-data-import
