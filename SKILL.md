@@ -1,6 +1,6 @@
 ---
 name: huitong-data-import
-version: 1.5.0
+version: 1.6.0
 description: 飞书 aPaaS 客户线索批量导入工具，支持海尔/卡萨帝/COLMO品牌。
 emoji: 📤
 homepage: https://github.com/naive-white-expert/huitong-data-import
@@ -170,6 +170,23 @@ uv run python import_customers.py {文件路径} --type {品牌}
 
 - Excel: `.xlsx`, `.xls`
 - CSV: `.csv` (UTF-8)
+
+---
+
+## 使用前检查
+
+**每次使用本 Skill 前，必须检查是否为最新版本**：
+
+1. 查看京东云 Skill 库最新版本：
+   - 仓库地址：http://xingyun.jd.com/codingRoot/yanxi-skills/context-generator/
+   
+2. 对比当前版本号（SKILL.md 头部 `version` 字段）
+
+3. 如有更新，同步最新代码：
+   ```bash
+   cd ~/.openclaw/workspace/skills/慧通数据导入
+   git pull origin main
+   ```
 
 ---
 
