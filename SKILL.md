@@ -64,12 +64,12 @@ metadata:
 | 沟通细节 | `details` | 跟进备注 |
 | 省市 | `province_city` | 码值，自动匹配ID |
 | 区县 | `district` | 文本值 |
+| 录音文本 | `recording_text` | 录音转文字 |
+| 录音链接 | `recording_link` | 录音URL |
 
 ### 可选字段（有就传，没有不传，不确认）
 | 字段 | API字段名 | 说明 |
 |------|-----------|------|
-| 录音文本 | `recording_text` | 录音转文字 |
-| 录音链接 | `recording_link` | 录音URL |
 | 性别 | `gender` | male/female |
 | 是否授权联系 | `customer_authorized_contact` | 是/否 |
 

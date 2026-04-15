@@ -66,8 +66,8 @@ ALLOWED_FIELDS = {
     "details": "required",           # 必传（沟通细节）
     "province_city": "required",     # 必传（省市，码值）
     "district": "required",          # 必传（区县，文本）
-    "recording_text": "optional",    # 可选，有就传
-    "recording_link": "optional",    # 可选，有就传
+    "recording_text": "required",    # 必传（录音文本）
+    "recording_link": "required",    # 必传（录音链接）
     "gender": "optional",            # 可选，有就传
     "customer_authorized_contact": "optional",  # 可选，有就传
 }
@@ -318,7 +318,7 @@ def create_records_batch(token: str, records: list, customer_type: str = "haier"
 
 def validate_record(record: dict) -> list:
     """验证必填字段（只检查白名单中的必传字段）"""
-    required = ["phone_number", "details", "province_city", "district"]
+    required = ["phone_number", "details", "province_city", "district", "recording_text", "recording_link"]
     missing = []
     
     for field in required:
@@ -329,6 +329,8 @@ def validate_record(record: dict) -> list:
                 "details": "沟通细节",
                 "province_city": "省市",
                 "district": "区县",
+                "recording_text": "录音文本",
+                "recording_link": "录音链接",
             }
             missing.append(field_names.get(field, field))
     
