@@ -59,27 +59,43 @@ CUSTOMER_TYPES = {
     },
 }
 
-# 字段映射：文件列名 -> API 字段名
+# 字段白名单：只允许传这些字段（其他字段禁止）
+# 来源固定为 'JD'，无需用户提供
+ALLOWED_FIELDS = {
+    "phone_number": "required",      # 必传
+    "details": "required",           # 必传（沟通细节）
+    "province_city": "required",     # 必传（省市，码值）
+    "district": "required",          # 必传（区县，文本）
+    "recording_text": "optional",    # 可选，有就传
+    "recording_link": "optional",    # 可选，有就传
+    "gender": "optional",            # 可选，有就传
+    "customer_authorized_contact": "optional",  # 可选，有就传
+}
+
+# 字段映射：文件列名 -> API 字段名（只保留白名单字段）
 FIELD_MAPPING = {
+    # 必传字段
     "手机号": "phone_number",
     "手机": "phone_number",
     "电话": "phone_number",
-    "来源": "source",
+    "沟通细节": "details",
     "跟进细节": "details",
     "跟进详情": "details",
     "备注": "details",
-    "客户是否授权联系": "customer_authorized_contact",
-    "授权联系": "customer_authorized_contact",
-    "性别": "gender",
+    "省市": "province_city",
     "区县": "district",
     "区": "district",
+    # 可选字段
     "录音文本": "recording_text",
     "录音链接": "recording_link",
-    "省市": "province_city",
-    # COLMO 特有字段
-    "手动推送": "manual_post",
-    "跟进情况": "follow_up_details",
-    "客户反馈": "feedback",
+    "性别": "gender",
+    "客户是否授权联系": "customer_authorized_contact",
+    "授权联系": "customer_authorized_contact",
+}
+
+# 固定值字段（自动填充，无需用户提供）
+FIXED_VALUES = {
+    "source": "JD",  # 来源固定为 JD
 }
 
 # 性别映射
@@ -235,7 +251,7 @@ def get_token(client_id: str, client_secret: str) -> str:
 
 
 def normalize_row(row: dict) -> tuple:
-    """标准化行数据，映射字段名
+    """标准化行数据，只处理白名单字段
     
     Returns:
         (result_dict, error_msg) - 成功时 error_msg 为 None
@@ -243,6 +259,11 @@ def normalize_row(row: dict) -> tuple:
     result = {}
     error = None
     
+    # 先添加固定值字段
+    for field, value in FIXED_VALUES.items():
+        result[field] = value
+    
+    # 只处理白名单字段，其他字段忽略
     for col_name, value in row.items():
         # 保留原始列名（用于结果文件）
         if col_name.strip() in ["导入结果", "失败原因"]:
@@ -253,6 +274,11 @@ def normalize_row(row: dict) -> tuple:
         
         api_field = FIELD_MAPPING.get(col_name.strip())
         if not api_field:
+            # 非白名单字段，忽略（不传）
+            continue
+        
+        # 检查是否在白名单中
+        if api_field not in ALLOWED_FIELDS:
             continue
         
         str_value = str(value).strip()
@@ -261,13 +287,16 @@ def normalize_row(row: dict) -> tuple:
         if api_field == "gender":
             str_value = GENDER_MAPPING.get(str_value, str_value)
         
-        # 省市字段 - 自动查找ID（不修改原始值）
+        # 省市字段 - 自动查找ID（码值）
         if api_field == "province_city":
             try:
                 region_id = find_region_id(str_value)
                 result[api_field] = {"_id": region_id}
             except ValueError as e:
                 error = str(e)
+        # 区县字段 - 文本值
+        elif api_field == "district":
+            result[api_field] = str_value
         else:
             result[api_field] = str_value
     
@@ -288,9 +317,21 @@ def create_records_batch(token: str, records: list, customer_type: str = "haier"
 
 
 def validate_record(record: dict) -> list:
-    """验证必填字段"""
-    required = ["phone_number", "source", "details"]
-    missing = [f for f in required if not record.get(f)]
+    """验证必填字段（只检查白名单中的必传字段）"""
+    required = ["phone_number", "details", "province_city", "district"]
+    missing = []
+    
+    for field in required:
+        if not record.get(field):
+            # 转换为中文名称便于用户理解
+            field_names = {
+                "phone_number": "手机号",
+                "details": "沟通细节",
+                "province_city": "省市",
+                "district": "区县",
+            }
+            missing.append(field_names.get(field, field))
+    
     return missing
 
 
