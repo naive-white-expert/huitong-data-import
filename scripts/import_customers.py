@@ -197,9 +197,10 @@ def find_region_id(region_name: str) -> str:
 
 
 def load_config(config_path: Path = None) -> dict:
-    """加载配置（优先级：环境变量 > 配置文件）"""
+    """加载配置（优先级：环境变量 > 根目录配置文件 > scripts配置文件）"""
     config = {}
     
+    # 1. 环境变量
     env_client_id = os.environ.get("CASARTE_CLIENT_ID")
     env_client_secret = os.environ.get("CASARTE_CLIENT_SECRET")
     
@@ -208,6 +209,18 @@ def load_config(config_path: Path = None) -> dict:
     if env_client_secret:
         config["client_secret"] = env_client_secret
     
+    # 2. 根目录配置文件
+    root_config_path = Path(__file__).parent.parent / "config.yaml"
+    if root_config_path.exists():
+        with open(root_config_path, "r", encoding="utf-8") as f:
+            root_config = yaml.safe_load(f) or {}
+            credentials = root_config.get("credentials", {})
+            if "client_id" not in config and credentials.get("client_id"):
+                config["client_id"] = credentials["client_id"]
+            if "client_secret" not in config and credentials.get("client_secret"):
+                config["client_secret"] = credentials["client_secret"]
+    
+    # 3. scripts目录配置文件（兼容旧配置）
     file_config = {}
     
     if config_path and config_path.exists():
@@ -215,17 +228,10 @@ def load_config(config_path: Path = None) -> dict:
             file_config = yaml.safe_load(f) or {}
     
     if not file_config:
-        default_paths = [
-            Path("config.yaml"),
-            Path("~/.openclaw/config/casarte-config.yaml").expanduser(),
-            Path(__file__).parent / "config.yaml",
-        ]
-        
-        for path in default_paths:
-            if path.exists():
-                with open(path, "r", encoding="utf-8") as f:
-                    file_config = yaml.safe_load(f) or {}
-                    break
+        scripts_config_path = Path(__file__).parent / "config.yaml"
+        if scripts_config_path.exists():
+            with open(scripts_config_path, "r", encoding="utf-8") as f:
+                file_config = yaml.safe_load(f) or {}
     
     for key in ["client_id", "client_secret"]:
         if key not in config and key in file_config:

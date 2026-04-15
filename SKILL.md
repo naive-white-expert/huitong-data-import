@@ -1,23 +1,15 @@
 ---
 name: huitong-data-import
-version: 1.0.0
+version: 1.4.0
 description: 飞书 aPaaS 客户线索批量导入工具，支持海尔/卡萨帝/COLMO品牌。
 emoji: 📤
 homepage: https://github.com/naive-white-expert/huitong-data-import
 metadata:
   openclaw:
     requires:
-      env:
-        - CASARTE_CLIENT_ID
-        - CASARTE_CLIENT_SECRET
-        - HAIER_CLIENT_ID
-        - HAIER_CLIENT_SECRET
-        - COLMO_CLIENT_ID
-        - COLMO_CLIENT_SECRET
       bins:
         - uv
         - python3
-    primaryEnv: CASARTE_CLIENT_ID
 ---
 
 # 慧通数据导入
@@ -178,6 +170,27 @@ uv run python import_customers.py {文件路径} --type {品牌}
 
 - Excel: `.xlsx`, `.xls`
 - CSV: `.csv` (UTF-8)
+
+---
+
+## 文档引用
+
+> **详细方法**: [scripts/import_customers.py](scripts/import_customers.py) - 导入脚本实现
+> 
+> **API参考**: [references/api.md](references/api.md) - 飞书 aPaaS API 文档
+> 
+> **更新记录**: [operation-log.md](operation-log.md) - 版本更新历史和导入记录
+
+---
+
+## 输出文件管理
+
+| 文件类型 | 存储路径 |
+|----------|----------|
+| 导入结果文件 | 原文件同目录，命名：`{原文件名}_导入结果_{时间戳}.xlsx` |
+| 模板文件 | `templates/{品牌}_customer_template.xlsx` |
+| 配置文件 | `config.yaml` |
+| 更新记录 | `operation-log.md` |
 
 ---
 
