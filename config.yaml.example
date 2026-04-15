@@ -1,0 +1,77 @@
+# 飞书 aPaaS 慧通数据导入配置
+
+# API 凭证（请替换为您的正式凭证）
+credentials:
+  client_id: "your_client_id_here"
+  client_secret: "your_client_secret_here"
+
+# API 接口配置
+api:
+  base_url: "https://ae-openapi.feishu.cn"
+  namespace: "package_e47f7d__c"
+  paths:
+    auth: "/auth/v1/appToken"
+    batch_create: "/v1/data/namespaces/{namespace}/objects/{object}/records_batch"
+  rate_limit_qps: 15
+
+# 客户类型配置
+customer_types:
+  haier:
+    object: "haier_customer"
+    name: "海尔意向客户"
+  casarte:
+    object: "casarte_customer"
+    name: "卡萨帝意向客户"
+  colmo:
+    object: "colmo_customer"
+    name: "COLMO意向客户"
+
+# 字段规则（白名单）
+field_rules:
+  fixed_values:
+    source: "JD"
+  
+  required_fields:
+    - phone_number    # 手机号
+    - details         # 沟通细节
+    - province_city   # 省市（码值）
+    - district        # 区县（文本）
+    - recording_text  # 录音文本
+    - recording_link  # 录音链接
+  
+  optional_fields:
+    - gender                    # 性别
+    - customer_authorized_contact  # 是否授权联系
+
+  field_mapping:
+    # 必传字段
+    "手机号": "phone_number"
+    "手机": "phone_number"
+    "电话": "phone_number"
+    "沟通细节": "details"
+    "跟进细节": "details"
+    "跟进详情": "details"
+    "备注": "details"
+    "省市": "province_city"
+    "区县": "district"
+    "区": "district"
+    "录音文本": "recording_text"
+    "录音链接": "recording_link"
+    # 可选字段
+    "性别": "gender"
+    "客户是否授权联系": "customer_authorized_contact"
+    "授权联系": "customer_authorized_contact"
+
+# 性别映射
+gender_mapping:
+  "男": "male"
+  "男士": "male"
+  "先生": "male"
+  "女": "female"
+  "女士": "female"
+  "小姐": "female"
+
+# 性能参数
+performance:
+  batch_size: 100
+  request_delay_ms: 100

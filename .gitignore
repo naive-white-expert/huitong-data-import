@@ -1,5 +1,6 @@
 # 本地管理文件，不上传
 .upload-record.md
+config.yaml
 
 # Python
 __pycache__/
