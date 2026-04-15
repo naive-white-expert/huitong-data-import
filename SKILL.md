@@ -178,7 +178,7 @@ uv run python import_customers.py {文件路径} --type {品牌}
 **每次使用本 Skill 前，必须检查是否为最新版本**：
 
 1. 查看京东云 Skill 库最新版本：
-   - 仓库地址：http://xingyun.jd.com/codingRoot/yanxi-skills/context-generator/
+   - 仓库地址：http://xingyun.jd.com/codingRoot/yanxi-skills/huitong-data-import/
    
 2. 对比当前版本号（SKILL.md 头部 `version` 字段）
 
